@@ -1,0 +1,28 @@
+{
+  "name": "newsletter-saude",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "npx tsx scripts/robot.ts"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.17",
+    "dotenv": "^17.4.2",
+    "next": "14.2.5",
+    "openai": "^4.10.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5",
+    "typescript": "^5.5.4"
+  }
+}
