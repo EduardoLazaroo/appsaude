@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
+
 import { queryIdeas } from '@/lib/notion';
 
 export async function GET() {

@@ -76,7 +76,7 @@ export default function Home() {
   async function loadIdeas() {
     setLoading(true);
     try {
-      const res = await fetch('/api/ideas');
+      const res = await fetch('/api/ideas', { cache: 'no-store' });
       if (!res.ok) throw new Error('Falha');
       setIdeas(await res.json());
     } catch (error) {
@@ -89,7 +89,7 @@ export default function Home() {
   async function loadNews() {
     setLoadingNews(true);
     try {
-      const res = await fetch('/api/news');
+      const res = await fetch('/api/news', { cache: 'no-store' });
       if (!res.ok) throw new Error('Falha');
       setNews(await res.json());
     } catch (error) {
@@ -117,6 +117,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pageId }),
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error('Falha');
       await loadIdeas();
@@ -135,6 +136,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pageId }),
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error('Falha');
       await loadIdeas();
@@ -155,6 +157,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pageId }),
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error('Falha');
       await loadIdeas();
@@ -170,7 +173,7 @@ export default function Home() {
     setSeeding(true);
     showToast('🤖 Robô Seeder trabalhando... (Isso pode demorar um pouco)');
     try {
-      const res = await fetch('/api/seed', { method: 'POST' });
+      const res = await fetch('/api/seed', { method: 'POST', cache: 'no-store' });
       if (!res.ok) throw new Error('Falha na geração em massa');
       const data = await res.json();
       await loadIdeas();
@@ -195,6 +198,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input: inputIdea }),
+        cache: 'no-store',
       });
 
       if (!res.ok) throw new Error('Falha ao transformar');
@@ -218,6 +222,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(generatedPost),
+        cache: 'no-store',
       });
 
       if (!res.ok) throw new Error('Falha ao adicionar');

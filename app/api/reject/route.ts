@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+
 import { rejectPage } from '@/lib/notion';
 
 export async function POST(request: Request) {
@@ -9,6 +11,7 @@ export async function POST(request: Request) {
     }
 
     await rejectPage(pageId);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error in reject route:', error);

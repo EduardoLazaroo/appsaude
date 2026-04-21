@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+
 import { getPageById, getRecentThemes, updatePageContent } from '@/lib/notion';
 import { generatePostDraft } from '@/lib/openai';
 
@@ -15,6 +17,7 @@ export async function POST(request: Request) {
     const text = await generatePostDraft(page.theme, page.subtheme, recentThemes);
 
     await updatePageContent(pageId, text);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Falha ao gerar conteúdo.' }, { status: 500 });

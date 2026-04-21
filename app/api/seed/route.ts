@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+
 import OpenAI from 'openai';
 import { getAllExistingThemes, createPreformedPage } from '@/lib/notion';
 
@@ -77,7 +79,7 @@ Retorne APENAS um Array JSON puro, contendo 2 objetos com "theme" e "text". Exem
       await createPreformedPage(post.theme, post.text);
       processados++;
     }
-
+    revalidatePath('/');
     return NextResponse.json({ success: true, count: processados });
   } catch (error) {
     console.error('Error in seed route:', error);
