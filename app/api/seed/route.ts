@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { getAllExistingThemes, createPreformedPage } from '../../../lib/notion';
+import { getAllExistingThemes, createPreformedPage } from '@/lib/notion';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

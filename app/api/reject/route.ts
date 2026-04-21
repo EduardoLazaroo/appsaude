@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { rejectPage } from '../../../lib/notion';
+import { rejectPage } from '@/lib/notion';
 
 export async function POST(request: Request) {
   try {

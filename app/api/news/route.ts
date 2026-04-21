@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchLatestNews } from '../../../lib/rss';
+import { fetchLatestNews } from '@/lib/rss';
 
 export async function GET() {
   try {

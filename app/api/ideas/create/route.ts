@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createPreformedPage } from '../../../lib/notion';
+import { createPreformedPage } from '@/lib/notion';
 
 export async function POST(request: Request) {
   try {

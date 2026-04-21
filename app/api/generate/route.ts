@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getPageById, getRecentThemes, updatePageContent } from '../../../lib/notion';
-import { generatePostDraft } from '../../../lib/openai';
+import { getPageById, getRecentThemes, updatePageContent } from '@/lib/notion';
+import { generatePostDraft } from '@/lib/openai';
 
 export async function POST(request: Request) {
   try {
