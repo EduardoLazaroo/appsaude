@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getRecentThemes } from '@/lib/notion';
 import OpenAI from 'openai';
+import { getClientIp, requireAdmin } from '@/lib/admin';
+import { rateLimitOrNull } from '@/lib/rateLimit';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(request: Request) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
+
+  const ip = getClientIp(request);
+  const limited = rateLimitOrNull({ key: `transform:${ip}`, limit: 10, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const input = body?.input?.trim();

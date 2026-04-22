@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -64,16 +64,19 @@ export default function Home() {
 
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  function showToast(message: string, type: 'default' | 'success' | 'error' | 'warning' = 'default') {
+  const showToast = useCallback(
+    (message: string, type: 'default' | 'success' | 'error' | 'warning' = 'default') => {
     const id = Date.now() + Math.random();
     setToasts((prev) => [...prev, { id, message, type }]);
-  }
+    },
+    [],
+  );
 
-  function removeToast(id: number) {
+  const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
-  }
+  }, []);
 
-  async function loadIdeas() {
+  const loadIdeas = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch('/api/ideas', { cache: 'no-store' });
@@ -84,9 +87,9 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [showToast]);
 
-  async function loadNews() {
+  const loadNews = useCallback(async () => {
     setLoadingNews(true);
     try {
       const res = await fetch('/api/news', { cache: 'no-store' });
@@ -97,17 +100,17 @@ export default function Home() {
     } finally {
       setLoadingNews(false);
     }
-  }
+  }, [showToast]);
 
   useEffect(() => {
     loadIdeas();
-  }, []);
+  }, [loadIdeas]);
 
   useEffect(() => {
     if (activeTab === 'noticias' && news.length === 0) {
       loadNews();
     }
-  }, [activeTab]);
+  }, [activeTab, loadNews, news.length]);
 
   async function handleGenerate(pageId: string) {
     setGeneratingId(pageId);
@@ -243,18 +246,72 @@ export default function Home() {
     { id: 'minha-ideia', label: '✏️ Minha Ideia', icon: '✏️' },
   ];
 
+  const totalIdeias = ideas.length;
+  const totalPendentes = ideas.filter((i) => i.status === 'Ideia').length;
+  const totalEmAprovacao = ideas.filter((i) => i.status === 'Gerado').length;
+  const totalAprovados = ideas.filter((i) => i.status === 'Aprovado').length;
+  const totalNoticias = news.length;
+
   return (
     <main className="page-bg">
       <div className="page-content">
+        <section className="welcome-strip">
+          <div className="welcome-strip-left">
+            <div className="welcome-strip-eyebrow">👩‍⚕️ Saúde preventiva na rotina</div>
+            <h2 className="welcome-strip-title">Olá, Isabela</h2>
+            <p className="welcome-strip-subtitle">
+              Central de ideias, notícias e aprovação — simples, consistente e com a sua linguagem.
+            </p>
+          </div>
+          <div className="welcome-strip-right">
+            <div className="welcome-strip-signature">Feito pelo seu maridão.</div>
+          </div>
+        </section>
+
+        <section className="quick-actions">
+          <Card className="quick-action-card" onClick={() => setActiveTab('minha-ideia')}>
+            <CardHeader className="quick-action-header">
+              <h3 className="quick-action-title">✏️ Minha ideia</h3>
+              <span className="quick-action-kpi">1 passo</span>
+            </CardHeader>
+            <CardBody className="quick-action-body">
+              <p className="quick-action-text">Transforme uma ideia solta em um post pronto.</p>
+            </CardBody>
+          </Card>
+
+          <Card className="quick-action-card" onClick={() => setActiveTab('ideias')}>
+            <CardHeader className="quick-action-header">
+              <h3 className="quick-action-title">💡 Ideias</h3>
+              <span className="quick-action-kpi">{totalIdeias}</span>
+            </CardHeader>
+            <CardBody className="quick-action-body">
+              <p className="quick-action-text">
+                Pendentes: <strong>{totalPendentes}</strong> · Em aprovação: <strong>{totalEmAprovacao}</strong> · Aprovados:{' '}
+                <strong>{totalAprovados}</strong>
+              </p>
+            </CardBody>
+          </Card>
+
+          <Card className="quick-action-card" onClick={() => setActiveTab('noticias')}>
+            <CardHeader className="quick-action-header">
+              <h3 className="quick-action-title">📰 Notícias</h3>
+              <span className="quick-action-kpi">{totalNoticias}</span>
+            </CardHeader>
+            <CardBody className="quick-action-body">
+              <p className="quick-action-text">Abra uma notícia e converta em ação prática.</p>
+            </CardBody>
+          </Card>
+        </section>
+
         {/* Hero Section */}
         <Hero
-          eyebrow="🎨 Central de Saúde Preventiva"
-          title="Seu Assistente de Conteúdo para LinkedIn"
-          subtitle="Crie, aprove e publique conteúdos sobre saúde preventiva com a ajuda de IA. Organizado, simples e profissional."
+          eyebrow="🌿 Central de Conteúdo"
+          title="Conteúdo de saúde preventiva, do seu jeito"
+          subtitle="Gere textos simples e confiáveis, aprove com calma e publique com consistência — sem sensacionalismo."
         />
 
         {/* Navigation Tabs */}
-        <div className="mb-8">
+        <div className="tabs-wrap">
           <Tabs
             tabs={tabs}
             activeTab={activeTab}
@@ -263,7 +320,7 @@ export default function Home() {
         </div>
 
         {/* Section Header */}
-        <div className="section-header mb-8">
+        <div className="section-header">
           <div>
             <h2>
               {activeTab === 'ideias'
@@ -281,7 +338,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex-row-reverse" style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="section-actions">
             {activeTab === 'ideias' && !loading && (
               <Button
                 variant="ai"
@@ -309,8 +366,8 @@ export default function Home() {
           {activeTab === 'minha-ideia' && (
             <>
               {!generatedPost ? (
-                <Card className="md:col-span-full">
-                  <CardBody className="space-y-6">
+                <Card className="content-full">
+                  <CardBody className="stack-lg">
                     <div>
                       <label>
                         📝 Qual é sua ideia de post?
@@ -336,7 +393,7 @@ export default function Home() {
                   </CardBody>
                 </Card>
               ) : (
-                <Card className="md:col-span-full">
+                <Card className="content-full">
                   <CardHeader>
                     <div>
                       <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: 'var(--color-text-primary)' }}>📋 Seu Post Gerado</h3>
@@ -352,7 +409,7 @@ export default function Home() {
                     </div>
                   </CardBody>
 
-                  <CardFooter className="flex-row-reverse gap-3">
+                  <CardFooter className="footer-actions-reverse">
                     <Button
                       variant="primary"
                       onClick={handleAddPost}
@@ -398,7 +455,7 @@ export default function Home() {
                 <Card key={idea.id}>
                   <CardHeader>
                     <div className="flex-1">
-                      <Badge variant="rose" className="mb-2">
+                      <Badge variant="rose" className="badge-block">
                         {idea.type || 'Pilar'}
                       </Badge>
                       <h3 style={{ fontWeight: '600', color: 'var(--color-text-primary)' }}>{idea.theme}</h3>
@@ -417,7 +474,7 @@ export default function Home() {
                     )}
                   </CardBody>
 
-                  <CardFooter className="gap-2">
+                  <CardFooter className="footer-actions">
                     {idea.status === 'Ideia' && (
                       <Button
                         variant="ai"
@@ -456,7 +513,7 @@ export default function Home() {
                       size="sm"
                       onClick={() => handleReject(idea.id)}
                       isLoading={rejectingId === idea.id}
-                      className="ml-auto btn-icon-rose"
+                      className="btn-icon-rose action-push-right"
                     >
                       🗑️ Reprovar
                     </Button>
@@ -478,7 +535,7 @@ export default function Home() {
                 <Card key={item.id}>
                   <CardHeader>
                     <div className="flex-1">
-                      <Badge variant="rose" className="mb-2">
+                      <Badge variant="rose" className="badge-block">
                         {item.source}
                       </Badge>
                       <h3 style={{ fontWeight: '600', color: 'var(--color-text-primary)' }}>{item.title}</h3>
@@ -497,8 +554,8 @@ export default function Home() {
                   </CardBody>
 
                   <CardFooter>
-                    <a href={item.link} target="_blank" rel="noreferrer" className="flex-1" style={{ flex: 1 }}>
-                      <Button variant="secondary" size="sm" className="w-full">
+                    <a href={item.link} target="_blank" rel="noreferrer" className="news-link">
+                      <Button variant="secondary" size="sm" className="news-link-btn">
                         📖 Ler Notícia
                       </Button>
                     </a>
@@ -507,6 +564,12 @@ export default function Home() {
               ))
             ))}
         </section>
+
+        <footer className="app-footer">
+          <div className="app-footer-inner">
+            <span className="app-footer-text">Feito pelo seu maridão.</span>
+          </div>
+        </footer>
       </div>
 
       {/* Toast Container */}

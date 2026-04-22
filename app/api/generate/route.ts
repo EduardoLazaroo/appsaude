@@ -3,8 +3,17 @@ import { revalidatePath } from 'next/cache';
 
 import { getPageById, getRecentThemes, updatePageContent } from '@/lib/notion';
 import { generatePostDraft } from '@/lib/openai';
+import { getClientIp, requireAdmin } from '@/lib/admin';
+import { rateLimitOrNull } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
+
+  const ip = getClientIp(request);
+  const limited = rateLimitOrNull({ key: `generate:${ip}`, limit: 10, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const pageId = body?.pageId;

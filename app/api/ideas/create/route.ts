@@ -2,8 +2,17 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
 import { createPreformedPage } from '@/lib/notion';
+import { getClientIp, requireAdmin } from '@/lib/admin';
+import { rateLimitOrNull } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
+
+  const ip = getClientIp(request);
+  const limited = rateLimitOrNull({ key: `ideas-create:${ip}`, limit: 20, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const { theme, text } = body;

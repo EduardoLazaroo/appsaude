@@ -27,11 +27,16 @@ Crie um database com as seguintes propriedades:
 ## Como usar
 
 1. Copie `.env.example` para `.env`
-2. Preencha `NOTION_API_KEY`, `NOTION_DATABASE_ID` e `OPENAI_API_KEY`
+2. Preencha `NOTION_API_KEY`, `NOTION_DATABASE_ID`, `OPENAI_API_KEY` e `ADMIN_TOKEN`
 3. Rode:
    - `npm install`
    - `npm run dev`
 4. Abra `http://localhost:3000`
+
+## Segurança (IMPORTANTE)
+
+As rotas `api/*` exigem o header `x-admin-token` com o valor do seu `ADMIN_TOKEN`.
+Sem isso, o app pode ser abusado para gerar custo de OpenAI/Notion.
 
 ## Fluxo MVP
 

@@ -3,6 +3,8 @@ import { revalidatePath } from 'next/cache';
 
 import OpenAI from 'openai';
 import { getAllExistingThemes, createPreformedPage } from '@/lib/notion';
+import { getClientIp, requireAdmin } from '@/lib/admin';
+import { rateLimitOrNull } from '@/lib/rateLimit';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -10,6 +12,13 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export const maxDuration = 60; 
 
 export async function POST(request: Request) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
+
+  const ip = getClientIp(request);
+  const limited = rateLimitOrNull({ key: `seed:${ip}`, limit: 3, windowMs: 60 * 60_000 });
+  if (limited) return limited;
+
   try {
     // 1. Puxa temas para blacklist
     const existingThemes = await getAllExistingThemes();
