@@ -1,0 +1,16 @@
+=== VALIDAÇÃO INTEGRADA: APPSAUDE (NEWSLETTER SAÚDE PREVENTIVA) ===
+Framework: Next.js 14.2.35 | TypeScript | Notion API | OpenAI GPT-4o-mini | RSS Parser (OMS)
+
+[TEST 1] GET / (Portal Editorial): HTTP 200 | Tamanho HTML: 7460 bytes
+  Página operacional: True
+
+[TEST 2] GET /api/news SEM x-admin-token (Barreira de Segurança): HTTP 401
+  Bloqueio de segurança verificado: {"error":"Não autorizado."}
+
+[TEST 3] GET /api/news COM x-admin-token (Curadoria RSS Ativa da OMS): HTTP 200
+  Total de notícias capturadas ao vivo: 3
+  Notícia 1 (Fonte: News (English) - World Health Organization): WHO Director-General visits Jordan to recognize strong collaboration on health system delivery, emergency relief and advancing mental health
+  Data de publicação: Wed, 25 Feb 2026 18:06:55 Z
+  Snippet informativo: The Director-General of the World Health Organization, Dr Tedros Adhanom Ghebreyesus, today concluded the first day of his two-day State vis...
+
+[TEST 4] POST /api/approve SEM x-admin-token: HTTP 401 | Resposta: {"error":"Não autorizado."}

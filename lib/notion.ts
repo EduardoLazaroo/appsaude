@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client';
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const notion = new Client({ auth: process.env.NOTION_API_KEY || 'dummy-notion-key' });
 const databaseId = process.env.NOTION_DATABASE_ID || '';
 
 function getTextValue(property: any): string {

@@ -214,8 +214,29 @@ npm run start
 
 ---
 
+---
+
+## Evidencias Visuais e Execucao Real
+
+A aplicacao foi submetida a ciclo completo de execucao e testes funcionais em ambiente real:
+
+1. **Compilacao de Producao**: `next build` executado com sucesso, gerando bundles estaticos e 8 rotas de API serverless protegidas.
+2. **Curadoria ao Vivo de Feeds RSS**: Endpoint `/api/news` testado com sucesso, ingerindo artigos em tempo real do feed oficial da Organizacao Mundial da Saude (OMS).
+3. **Auditoria de Seguranca da API**: Validacao de bloqueio `HTTP 401 Unauthorized` na ausencia do cabecalho `x-admin-token`, confirmando a protecao de endpoints criticos contra chamadas indevidas.
+
+Evidencia consolidada gravada em: [`evidencias/log_execucao_real.txt`](evidencias/log_execucao_real.txt).
+
+### Diagramas de Arquitetura e Ciclo Editorial
+
+![Arquitetura da Plataforma Editorial de Saude Preventiva](evidencias/arquitetura_editorial_saude.png)
+
+![Ciclo de Vida Editorial e Guardrails Clinicos](evidencias/ciclo_vida_editorial_guardrails.png)
+
+---
+
 ## Boas Praticas de Governanca Editorial
 
 A publicacao definitiva dos posts em redes sociais corporativas ou comunicadores internos (como LinkedIn, Slack ou newsletters institucionais) permanece intencionalmente manual. 
 
 Essa decisao de design assegura que qualquer alteracao sutil em politicas de saude, recomendacoes vigentes ou tom de voz da marca passe pelo crivo analitico de um profissional humano antes de sua veiculacao publica.
+

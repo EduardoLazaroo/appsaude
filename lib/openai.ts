@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build' });
 
 export async function generatePostDraft(theme: string, subtheme: string, recentThemes: string[]) {
   const prompt = `Você é Isabela, uma Enfermeira atuando em saúde corporativa. 
